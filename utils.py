@@ -1,3 +1,4 @@
+%%writefile utils.py
 import os
 import getpass
 from datetime import datetime
@@ -17,7 +18,7 @@ def get_remote_file(remote_path, local_path=None):
     local_hostname = socket.gethostname()
     if hostname == local_hostname or hostname == local_hostname[:local_hostname.find('.')]:
         return path
-
+    
     if local_path is None:
         local_path = path
     # local_path = local_path.replace('/scr-ssd', '/scr')    
@@ -82,7 +83,7 @@ def all_gather_if_needed(values: torch.Tensor, rank: int, world_size: int) -> to
 def formatted_dict(d: Dict) -> Dict:
     """Format a dictionary for printing."""
     return {k: (f"{v:.5g}" if type(v) == float else v) for k, v in d.items()}
-
+    
 
 def disable_dropout(model: torch.nn.Module):
     """Disable dropout in a model."""
