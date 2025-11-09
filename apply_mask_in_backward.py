@@ -1,3 +1,4 @@
+%%writefile apply_mask_in_backward.py
 from typing import Any, Dict, Iterable, List, no_type_check, Type
 
 import torch
@@ -40,7 +41,7 @@ class MaskedRMSprop(torch.optim.RMSprop):
                                 raise ValueError(f"Mask shape {self.mask.shape} does not match gradient shape {p.grad.data.shape}")
                         if self.max_grad_norm is not None:
                             torch.nn.utils.clip_grad_norm_(p, self.max_grad_norm)
-
+        
         # Call the original RMSprop step function
         super(MaskedRMSprop, self).step(closure)
 
@@ -92,11 +93,11 @@ class MaskedAdamW(torch.optim.AdamW):
             self.lr_scheduler.step()
 
         return loss
-
+    
 
 @no_type_check
 def _apply_masked_optimizer_in_backward(optimizer_class, named_params, mask_dict, optimizer_kwargs, use_mask: bool = False, register_hook: bool = True):
-
+    
     @no_type_check
     def _apply_masked_optimizer_in_backward_to_param(param: torch.nn.Parameter, mask, optimizer_kwargs_inner) -> None:
         if not param.requires_grad:
@@ -110,14 +111,14 @@ def _apply_masked_optimizer_in_backward(optimizer_class, named_params, mask_dict
         # i.e. for shared parameters or attaching multiple optimizers to a param.
         if param not in param_to_acc_grad_map:
             param_to_acc_grad_map[param] = param.view_as(param).grad_fn.next_functions[0][0]
-
+            
         if optimizer_class == torch.optim.AdamW:
             masked_optimizer_class = MaskedAdamW
         elif optimizer_class == torch.optim.RMSprop:
             masked_optimizer_class = MaskedRMSprop
         else:
             raise ValueError(f"Unsupported optimizer: {optimizer_class}")
-
+        
         optimizer = masked_optimizer_class([param], mask, **optimizer_kwargs_inner)
 
         if not hasattr(param, "_in_backward_optimizers"):
@@ -151,9 +152,9 @@ def _apply_masked_optimizer_in_backward(optimizer_class, named_params, mask_dict
         max_grad_norm = optimizer_kwargs['max_grad_norm'] / (num_params ** 0.5)
     else:
         raise ValueError(f"Invalid grad_norm_strategy: {optimizer_kwargs['grad_norm_strategy']}")
-
+    
     optimizer_kwargs['max_grad_norm'] = max_grad_norm
-
+    
     for name, param in named_params:
         optimizer_kwargs_inner = optimizer_kwargs.copy()
         if "lora_B.default.weight" in name and use_mask:
