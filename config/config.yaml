@@ -1,0 +1,60 @@
+defaults: [_self_]
+
+exp_name:          null
+local_dirs:        ["~/.cache"]
+local_run_dir:     ${get_local_run_dir:${exp_name},${local_dirs}}
+seed:              123
+quantization:      none  # Add this at root level
+
+model:
+  name_or_path:    meta-llama/Meta-Llama-3.1-8B-Instruct
+  tokenizer_name_or_path: null
+  policy_dtype:    float16
+  reference_dtype: float16
+  block_name:      LlamaDecoderLayer
+  archive:         null
+  fsdp_policy_mp:  null
+
+trainer:           BasicTrainer
+optimizer:         AdamW
+
+loss:
+  name:            sft
+  beta:            0.1
+
+datasets:          []
+batch_size:        8
+n_epochs:          1
+n_examples:        null
+lr:                2e-4
+
+max_length:        2048
+max_prompt_length: 2048
+
+gradient_accumulation_steps: 1
+warmup_steps:      10
+max_grad_norm:     1.0
+grad_norm_strategy: even
+mask_path:         null
+data_fraction:     1.0
+num_turns:         1
+prefs_path:        null
+
+use_val_loss:      false
+eval_batch_size:   64
+eval_every:        1000
+sample_during_eval: false
+n_eval_samples:    0
+minimum_log_interval_secs: 30
+save_every:        1000000
+activation_checkpointing: false
+
+wandb:
+  enabled:         false
+  entity:          null
+  project:         null
+
+fsdp_port:         12355
+lora_rank:         8
+lora_alpha:        16
+sparsity_ratio:    0.0

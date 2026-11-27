@@ -1,0 +1,15 @@
+accelerate
+beautifulsoup4
+bitsandbytes
+datasets
+huggingface-hub
+hydra-core
+numpy
+omegaconf
+peft
+PyYAML
+rouge-score
+torch
+tqdm
+transformers>=4.42
+wandb
