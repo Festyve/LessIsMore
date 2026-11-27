@@ -1,4 +1,3 @@
-%%writefile apply_mask_in_backward.py
 from typing import Any, Dict, Iterable, List, no_type_check, Type
 
 import torch

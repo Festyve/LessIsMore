@@ -1,4 +1,3 @@
-%%writefile utils.py
 import os
 import getpass
 from datetime import datetime
@@ -9,7 +8,6 @@ import torch.distributed as dist
 import inspect
 import importlib.util
 import socket
-import os
 from typing import Dict, Union, Type, List
 
 
@@ -40,7 +38,7 @@ def rank0_print(*args, **kwargs):
 
 def get_local_dir(prefixes_to_resolve: List[str]) -> str:
     """Return the path to the cache directory for this user."""
-    return os.getenv("PROJECT_CACHE", "~/.cache")
+    return os.path.expanduser(os.getenv("PROJECT_CACHE", "~/.cache"))
 
 
 def get_local_run_dir(exp_name: str, local_dirs: List[str]) -> str:

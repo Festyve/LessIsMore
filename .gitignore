@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+.DS_Store
+
+# Local experiment artifacts
+/outputs/
+/multirun/
+/workspace/
+/results/
+/wandb/
